@@ -1,1 +1,141 @@
-dmxlc3M6Ly9mZmZmZmZmZi1mZmZmLWZmZmYtZmZmZi1mZmZmZmZmZmZmZmZAMS4xLjEuMTo0NDMvP3R5cGU9d3MmZW5jcnlwdGlvbj1ub25lJmZsb3c9Jmhvc3Q9MS4xLjEuMSZwYXRoPVRHOkBFbmtlbHRlX25vdGlmJiZURzpATm90aWZfQ2hhdCZzZWN1cml0eT10bHMmc25pPTEuMS4xLjEmZnA9ZmlyZWZveCPlhaznm4roioLngrnmnaXoh6pUR+mikemBkzpARW5rZWx0ZV9ub3RpZvCfmoBUR+e+pOe7hDpATm90aWZfQ2hhdAo=
+{
+  "log": {
+    "level": "warn",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "address": "tcp://8.8.8.8",
+        "strategy": "ipv4_only",
+        "tag": "remote",
+        "detour": "proxy"
+      },
+      {
+        "address": "223.5.5.5",
+        "strategy": "ipv4_only",
+        "tag": "local",
+        "detour": "direct"
+      },
+      {
+        "address": "rcode://success",
+        "tag": "block"
+      },
+      {
+        "address": "223.5.5.5",
+        "tag": "final_resolver",
+        "detour": "direct"
+      }
+    ],
+    "rules": [
+      {
+        "server": "remote",
+        "clash_mode": "Global"
+      },
+      {
+        "server": "final_resolver",
+        "clash_mode": "Direct"
+      },
+      {
+        "server": "remote",
+        "rule_set": [
+          "geosite-geolocation-!cn"
+        ]
+      },
+      {
+        "server": "block",
+        "rule_set": [
+          "geosite-category-ads-all"
+        ]
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "type": "mixed",
+      "tag": "socks",
+      "listen": "0.0.0.0",
+      "listen_port": 1200
+    }
+  ],
+  "outbounds": [
+    {
+      "server": "34.170.97.88",
+      "server_port": 3389,
+      "type": "http",
+      "tag": "proxy",
+      "detour": "prev-proxy"
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "server": "192.168.2.1",
+      "server_port": 1200,
+      "version": "5",
+      "type": "socks",
+      "tag": "prev-proxy"
+    }
+  ],
+  "route": {
+    "default_domain_resolver": {
+      "server": "final_resolver",
+      "strategy": ""
+    },
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "protocol": [
+          "dns"
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "outbound": "direct",
+        "clash_mode": "Direct"
+      },
+      {
+        "outbound": "proxy",
+        "clash_mode": "Global"
+      },
+      {
+        "outbound": "proxy",
+        "port_range": [
+          "0:65535"
+        ]
+      },
+      {
+        "action": "resolve",
+        "strategy": "ipv4_only"
+      }
+    ],
+    "rule_set": [
+      {
+        "tag": "geosite-geolocation-!cn",
+        "type": "local",
+        "format": "binary",
+        "path": "F:\\软件\\v2rayN\\bin\\srss\\geosite-geolocation-!cn.srs"
+      },
+      {
+        "tag": "geosite-category-ads-all",
+        "type": "local",
+        "format": "binary",
+        "path": "F:\\软件\\v2rayN\\bin\\srss\\geosite-category-ads-all.srs"
+      }
+    ],
+    "final": "proxy"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "F:\\软件\\v2rayN\\bin\\cache.db",
+      "store_fakeip": false
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:1205"
+    }
+  }
+}
